@@ -176,8 +176,8 @@
 
     .welcome-pop {
       position: fixed;
-      left: 50%;
-      top: clamp(80px, 18vh, 160px);
+      left: var(--pop-left, 50%);
+      top: var(--pop-top, clamp(80px, 18vh, 160px));
       z-index: 8;
       max-width: min(420px, 82vw);
       padding: 10px 14px;
@@ -191,14 +191,14 @@
       line-height: 1.2;
       text-align: center;
       opacity: 0;
-      transform: translate(-50%, 8px) scale(0.96);
+      transform: translate(-50%, calc(-100% + 8px)) scale(0.96);
       transition: opacity 220ms ease, transform 220ms ease;
       pointer-events: none;
     }
 
     .page.is-entering .welcome-pop {
       opacity: 1;
-      transform: translate(-50%, 0) scale(1);
+      transform: translate(-50%, -100%) scale(1);
     }
 
     .impact {
@@ -363,6 +363,7 @@
 
         const isGuang = entry.classList.contains("guang");
         welcomePop.textContent = isGuang ? "Welcome, Guang's world" : "Welcome, aweii's world";
+        placeWelcomePop(entry);
         page.classList.add("is-entering");
         entry.classList.add("is-entering");
 
@@ -371,6 +372,17 @@
         }, 980);
       });
     });
+
+    function placeWelcomePop(entry) {
+      const rect = entry.getBoundingClientRect();
+      const x = rect.left + rect.width * (entry.classList.contains("guang") ? 0.52 : 0.5);
+      const y = rect.top + rect.height * (entry.classList.contains("guang") ? 0.2 : 0.18);
+      const safeX = Math.min(window.innerWidth - 16, Math.max(16, x));
+      const safeY = Math.min(window.innerHeight - 16, Math.max(74, y));
+
+      welcomePop.style.setProperty("--pop-left", `${safeX}px`);
+      welcomePop.style.setProperty("--pop-top", `${safeY}px`);
+    }
   </script>
 </body>
 </html>
